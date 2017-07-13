@@ -1,15 +1,15 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Hello from '@/components/Hello'
+import * as RouterPath from './../constants/RouterPaths'
+import Location from './../pages/location/Index'
 
 Vue.use(Router)
 
 export default new Router({
-  routes: [
-    {
-      path: '/',
-      name: 'Hello',
-      component: Hello
-    }
-  ]
+    routes: [
+        {
+            path: RouterPath.PAGES_LOCATION,
+            component: Location
+        },
+    ]
 })

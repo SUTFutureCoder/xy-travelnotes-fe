@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <router-view></router-view>
-    <bottom></bottom>
+    <bottom id="bottom"></bottom>
   </div>
 </template>
 
@@ -32,6 +32,9 @@ export default {
   #app {
     height: 100%
   }
-  .bottom {
+  #bottom {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
   }
 </style>
