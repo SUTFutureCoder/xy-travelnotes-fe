@@ -24,6 +24,12 @@
         },
         "cordova-plugin-background-mode": {
             "PACKAGE_NAME": "io.cordova.hellocordova"
+        },
+        "cordova-plugin-camera": {
+            "PACKAGE_NAME": "io.cordova.yostar"
+        },
+        "cordova-plugin-file": {
+            "PACKAGE_NAME": "io.cordova.yostar"
         }
     },
     "dependent_plugins": {
