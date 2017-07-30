@@ -69,11 +69,13 @@
             },
             sendLocateNote () {
                 //向服务器发送
-                console.log(LocationService.pointListGet())
-                console.log(LocationService.pointListSend())
+                var currentPointList = LocationService.pointListGet()
+
                 this.closePopup()
             },
             closePopup () {
+                //清空数据
+                this['locationPicList'] = []
                 this['popup'] = false
             },
             //相机相关
@@ -85,7 +87,8 @@
                     // In this app, dynamically set the picture source, Camera or photo gallery
                     sourceType: srcType,
                     encodingType: Camera.EncodingType.JPEG,
-                    mediaType: Camera.MediaType.PICTURE,
+//                    mediaType: Camera.MediaType.PICTURE,
+                    mediaType: Camera.MediaType.ALLMEDIA,
                     allowEdit: false,
                     correctOrientation: true  //Corrects Android orientation quirks
                 }
