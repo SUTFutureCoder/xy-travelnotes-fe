@@ -1,13 +1,12 @@
 <template>
   <div id="app">
-    <router-view></router-view>
+    <keep-alive><router-view></router-view></keep-alive>
     <bottom id="bottom"></bottom>
   </div>
 </template>
 
 <script>
 import Bottom from './pages/common/Bottom'
-
 export default {
     name: 'app',
     data () {

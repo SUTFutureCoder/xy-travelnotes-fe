@@ -5,5 +5,4 @@
 
 // export const PAGES_HOME  = '/'
 export const PAGES_LOCATION = '/'
-export const PAGES_LOCATION_NAME = '位置记'
-
+export const PAGES_MEMORY   = '/memory'

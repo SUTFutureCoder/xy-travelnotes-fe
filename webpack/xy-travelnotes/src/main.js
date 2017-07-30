@@ -9,7 +9,6 @@ import 'muse-ui/dist/theme-light.css'
 import App from './App'
 import router from './router'
 
-
 Vue.config.productionTip = false
 
 Vue.use(MuseUI)

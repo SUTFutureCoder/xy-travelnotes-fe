@@ -8,11 +8,12 @@
                 :anchorOrigin="rightTop"
                 :targetOrigin="rightTop"
         >
-            <mu-menu-item title="停止记录" />
-            <mu-menu-item title="添加路书" @click="openPopup"/>
+            <mu-menu-item title="开始记录" v-if="!locationRecSwitch" @click="startRecLocation"/>
+            <mu-menu-item title="添加路书" v-if="locationRecSwitch" @click="openPopup"/>
+            <mu-menu-item title="停止记录" v-if="locationRecSwitch"  @click="stopRecLocation"/>
         </mu-icon-menu>
 
-        <mu-popup position="bottom" popupClass="popup-record-location" :open="popup" @close="closePopup()">
+        <mu-popup position="bottom" popupClass="popup-record-location" v-if="locationRecSwitch" :open="popup" @close="closePopup()">
             <mu-appbar title="添加路书">
                 <mu-flat-button slot="right" label="关闭" color="white" @click="closePopup()"/>
             </mu-appbar>
@@ -32,7 +33,7 @@
                 </div>
                 <br/>
                 <mu-row gutter>
-                    <mu-raised-button label="发送ヽ(✿ﾟ▽ﾟ)ノ" primary fullWidth/>
+                    <mu-raised-button label="发送ヽ(✿ﾟ▽ﾟ)ノ" @click="sendLocateNote" primary fullWidth/>
                 </mu-row>
             </mu-content-block>
         </mu-popup>
@@ -40,20 +41,37 @@
 </template>
 <script>
     import BaiduMap from './components/BaiduMap'
+    import LocationService from './LocationService'
+    import Bus from '../../assets/EventBus'
     export default {
         data () {
             return {
+                locationRecSwitch: false,      //记录开关
                 rightTop: {horizontal: 'right', vertical: 'top'},
                 popup: false,
                 locationPicList: [],
             }
         },
+        mounted() {
+            LocationService.addLocationLinstener()
+        },
         methods: {
-            popupRecordLocation: function (){
-
+            startRecLocation() {
+                this['locationRecSwitch'] = true
+                Bus.$emit('switch_location_point_rec', true);
+            },
+            stopRecLocation() {
+                this['locationRecSwitch'] = false
+                Bus.$emit('switch_location_point_rec', false);
             },
             openPopup () {
                 this['popup'] = true
+            },
+            sendLocateNote () {
+                //向服务器发送
+                console.log(LocationService.pointListGet())
+                console.log(LocationService.pointListSend())
+                this.closePopup()
             },
             closePopup () {
                 this['popup'] = false
@@ -128,9 +146,6 @@
         overflow-x: auto;
     }
     /* 纠偏 */
-    .mu-grid-tile img {
-        
-    }
     .mu-grid-tile-titlebar {
         background-color: transparent;
     }

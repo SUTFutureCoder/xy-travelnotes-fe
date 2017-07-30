@@ -12,6 +12,7 @@
 </template>
 
 <script>
+    import Bus from '../../../assets/EventBus'
     export default {
         data () {
             return {
@@ -19,13 +20,16 @@
                     lng: 0,
                     lat: 0
                 },
-                zoom: 19
+                zoom: 19,
+
+                centerLocateSwitch: 1,  //针对居中定位的计时器
+                centerLocateTimeoutId: 0,
             }
         },
         mounted() {
             setInterval(
                 this.location,
-                10000
+                10000   //每10秒定位一次
             );
             let vue = this;
             document.addEventListener('deviceready', function () {
@@ -50,12 +54,37 @@
         },
         methods: {
             syncCenterAndZoom(e) {
+                //移动后清除定时器
+                if (this.$data.centerLocateSwitch == 1){
+                    this.$data.centerLocateSwitch = 0
+                    this.resetCenterLocate()
+                }
+            },
+            resetCenterLocate() {
+                //重新居中
+                let vue = this
+                if (this.$data.centerLocateSwitch == 0) {
+                    if (this.$data.centerLocateTimeoutId != 0){
+                        clearTimeout(this.$data.centerLocateTimeoutId)
+                    }
+                    this.$data.centerLocateTimeoutId = setTimeout(function (){
+                        vue.$data.centerLocateSwitch = 1
+                    }, 10000);   //十秒恢复
+                }
+            },
+            setCenterLocate(lat, lng) {
+                if (this.$data.centerLocateSwitch == 1
+                        || (this.$data.center.lat == 0 && this.$data.center.lng == 0)) {
+                    this.$data.center.lat = lat
+                    this.$data.center.lng = lng
+                }
             },
             location() {
                 let vue = this
                 AdvancedGeolocation.start(function(data){
                         try{
                             var jsonObject = JSON.parse(data);
+                            Bus.$emit('current_location', jsonObject);
                             switch(jsonObject.provider){
                                 case "gps":
 //                                    if(jsonObject.latitude != "0.0"){
@@ -71,9 +100,11 @@
 
                                     convertor.translate(pointArr, 1, 5, function (data){
                                         if(data.status === 0) {
-                                            vue.$data.center.lat = data.points[0].lat
-                                            vue.$data.center.lng = data.points[0].lng
+                                            vue.setCenterLocate(data.points[0].lat, data.points[0].lng)
+                                            jsonObject.latitude  = data.points[0].lat
+                                            jsonObject.longitude = data.points[0].lng
                                         }
+                                        Bus.$emit('current_gps_location', jsonObject);
                                     })
                                     break;
 
@@ -90,9 +121,11 @@
 
                                     convertor.translate(pointArr, 1, 5, function (data){
                                         if(data.status === 0) {
-                                            vue.$data.center.lat = data.points[0].lat
-                                            vue.$data.center.lng = data.points[0].lng
+                                            vue.setCenterLocate(data.points[0].lat, data.points[0].lng)
+                                            jsonObject.latitude  = data.points[0].lat
+                                            jsonObject.longitude = data.points[0].lng
                                         }
+                                        Bus.$emit('current_network_location', jsonObject);
                                     })
                                     break;
 
