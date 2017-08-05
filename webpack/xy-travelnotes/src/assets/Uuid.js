@@ -12,6 +12,11 @@ export function getUuid(name){
     return uuidMap[name]
 }
 
+export function resetUuid(name){
+    uuidMap[name] = genUuid(16, 16)
+    return uuidMap[name]
+}
+
 export function genUuid(len, radix) {
         let chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
         let uuid = [], i;

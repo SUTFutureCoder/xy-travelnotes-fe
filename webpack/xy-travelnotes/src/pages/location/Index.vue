@@ -50,6 +50,8 @@
                 rightTop: {horizontal: 'right', vertical: 'top'},
                 popup: false,
                 locationPicList: [],
+
+                intervalSetLocationRec: 0,
             }
         },
         mounted() {
@@ -61,10 +63,25 @@
                 Bus.$emit('switch_location_point_rec', true);
                 //获取当前点名称
                 LocationService.initRecLocation();
+                //设置当前录制uuid
+                LocationService.storageSetCurrentRecId('')
+                //向录制uuid集添加uuid
+                LocationService.storagePushUuidList(LocationService.storageGetCurrentRecId())
+                //设置定时任务 每1分钟同步记录点集到localstorage中
+                this['intervalSetLocationRec'] = setInterval(() => {
+                    LocationService.storageSetLocationRec()
+                }, 1 * 1000)
             },
             stopRecLocation() {
                 this['locationRecSwitch'] = false
                 Bus.$emit('switch_location_point_rec', false);
+                //执行停止记录操作
+                LocationService.stopRecLocation()
+                clearInterval(this['intervalSetLocationRec'])
+                //立即执行同步
+                LocationService.storageSetLocationRec()
+                //清除录制uuid
+                LocationService.storageResetCurrentRecId()
             },
             openPopup () {
                 this['popup'] = true
