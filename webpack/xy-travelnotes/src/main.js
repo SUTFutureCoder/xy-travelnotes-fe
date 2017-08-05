@@ -8,13 +8,17 @@ import 'muse-ui/dist/muse-ui.css'
 import 'muse-ui/dist/theme-light.css'
 import App from './App'
 import router from './router'
+import * as Const from '../src/constants/Const'
+import * as Global from '../src/constants/Global'
+
 
 Vue.config.productionTip = false
+Vue.prototype.GLOBAL = Global
 
 Vue.use(MuseUI)
 Vue.use(VueResource)
 Vue.use(BaiduMap, {
-    ak: 'AaXe3HZ8ouvnNXwQKTeaVWGB7zao07C6'
+    ak: Const.ak,
 })
 
 /* eslint-disable no-new */

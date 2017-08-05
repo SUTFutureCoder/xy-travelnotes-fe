@@ -24,6 +24,10 @@
 
                 centerLocateSwitch: 1,  //针对居中定位的计时器
                 centerLocateTimeoutId: 0,
+
+                //记录坐标转换重试次数以及开关
+                //如果当前坐标无法被转换，则判定为海外
+                transRetry: 0,
             }
         },
         mounted() {
@@ -98,14 +102,28 @@
                                     var pointArr = [];
                                     pointArr.push(GpsPoint);
 
-                                    convertor.translate(pointArr, 1, 5, function (data){
-                                        if(data.status === 0) {
-                                            vue.setCenterLocate(data.points[0].lat, data.points[0].lng)
-                                            jsonObject.latitude  = data.points[0].lat
-                                            jsonObject.longitude = data.points[0].lng
-                                        }
+                                    if (vue.GLOBAL.default.oversea == 0){
+                                        //国内需要转换
+                                        convertor.translate(pointArr, 1, 5, function (data){
+                                            if(data.status === 0) {
+                                                vue.setCenterLocate(data.points[0].lat, data.points[0].lng)
+                                                jsonObject.latitude  = data.points[0].lat
+                                                jsonObject.longitude = data.points[0].lng
+                                                vue['transRetry']    = 0    //清零重试计数器
+                                            } else {
+                                                if (vue['transRetry'] >= 1) {
+                                                    vue.GLOBAL.default.oversea = 1
+                                                }
+                                                vue['transRetry']++
+                                                vue.setCenterLocate(jsonObject.latitude, jsonObject.longitude)
+                                            }
+                                            Bus.$emit('current_gps_location', jsonObject);
+                                        })
+                                    } else {
+                                        //国外不需要
+                                        vue.setCenterLocate(jsonObject.latitude, jsonObject.longitude)
                                         Bus.$emit('current_gps_location', jsonObject);
-                                    })
+                                    }
                                     break;
 
                                 case "network":
@@ -119,14 +137,29 @@
                                     var pointArr = [];
                                     pointArr.push(GpsPoint);
 
-                                    convertor.translate(pointArr, 1, 5, function (data){
-                                        if(data.status === 0) {
-                                            vue.setCenterLocate(data.points[0].lat, data.points[0].lng)
-                                            jsonObject.latitude  = data.points[0].lat
-                                            jsonObject.longitude = data.points[0].lng
-                                        }
+                                    if (vue.GLOBAL.default.oversea == 0){
+                                        //国内需要转换
+                                        convertor.translate(pointArr, 1, 5, function (data){
+                                            if(data.status === 0) {
+                                                vue.setCenterLocate(data.points[0].lat, data.points[0].lng)
+                                                jsonObject.latitude  = data.points[0].lat
+                                                jsonObject.longitude = data.points[0].lng
+                                                vue['transRetry']    = 0    //清零重试计数器
+                                            } else {
+                                                vue['transRetry']++
+                                                if (vue['transRetry'] >= 2) {
+                                                    vue.GLOBAL.default.oversea = 1
+                                                }
+                                                vue.setCenterLocate(jsonObject.latitude, jsonObject.longitude)
+                                            }
+                                            Bus.$emit('current_network_location', jsonObject);
+                                        })
+                                    } else {
+                                        //国外不需要
+                                        vue.setCenterLocate(jsonObject.latitude, jsonObject.longitude)
                                         Bus.$emit('current_network_location', jsonObject);
-                                    })
+                                    }
+
                                     break;
 
                                 case "satellite":
@@ -149,13 +182,13 @@
                             return jsonObject
                         }
                         catch(exc){
-                            console.log("Invalid JSON: " + exc);
+//                            console.log("Invalid JSON: " + exc);
                         }
                     },
                     function(error){
-                        console.log("Error JSON: " + JSON.stringify(error));
-                        var e = JSON.parse(error);
-                        console.log("Error no.: " + e.error + ", Message: " + e.msg + ", Provider: " + e.provider);
+//                        console.log("Error JSON: " + JSON.stringify(error));
+//                        var e = JSON.parse(error);
+//                        console.log("Error no.: " + e.error + ", Message: " + e.msg + ", Provider: " + e.provider);
                     },
                     /////////////////////////////////////////
                     //

@@ -4,7 +4,9 @@
  * Created by lin on 17-7-18.
  */
 import Bus from '../../assets/EventBus'
-
+import * as Const from '../../constants/Const'
+import * as Uuid from '../../assets/Uuid'
+let Vue = Bus
 export default {
     currentLocation: {},
     locationPointList: [],
@@ -13,15 +15,22 @@ export default {
     addLocationLinstener: function(){
         let ls = this
         Bus.$on('switch_location_point_rec', function(toggle){
-            console.log(toggle)
             ls.locationPointRecSwitch = toggle
         })
         Bus.$on('current_gps_location', function(jsonObject){
             ls.currentLocation = jsonObject
-            console.log(jsonObject)
-            console.log(ls.locationPointRecSwitch)
             if (ls.locationPointRecSwitch){
                 ls.pointListPush(jsonObject)
+            }
+        })
+        Bus.$on('format_location', function (jsonObject, from) {
+            switch (from) {
+                case Const.Baidu:
+
+                    break;
+                case Const.GOOGLE:
+
+                    break;
             }
         })
     },
@@ -54,19 +63,62 @@ export default {
         return this.locationPointList
     },
     pointListSend: function () {
-        Bus.$http.post('baidu.com', this.locationPointList, {
-            emulateJSON: true
-        })
+    },
+    //设置录制路径初始化
+    initRecLocation: function () {
+        //获取当前点坐标
+        let currentLocation = this.getCurrentLocation()
+        if (undefined != currentLocation.latitude && undefined != currentLocation.longitude){
+            if (0 == Vue.GLOBAL.default.oversea){
+                //国内
+                this.getFormatLocationBd(currentLocation.latitude, currentLocation.longitude)
+            } else {
+                //海外
+                this.getFormatLocationGoogle(currentLocation.latitude, currentLocation.longitude)
+            }
+        } else {
+            //进行重试
+            setTimeout(() => {
+                this.initRecLocation()
+            }, 1000)
+        }
+    },
+    getFormatLocationBd: function (lat, lng) {
+        let tmpThis = this
+        Bus.$http.get('http://api.map.baidu.com/geocoder/v2/?ak=' + Const.ak + '&location=' + lat + ',' + lng + '&output=json')
             .then((response) => {
-                var ret = response.body
-                if (ret['error_no'] != 0) {
-                    alert(ret['error_msg'])
-                    this.reg_phone_captcha_send = false
-                }
+            console.log(response)
+                Bus.$emit('format_location', response.body.result, Const.Baidu)
             })
             .catch(function (response) {
-                console.log(response)
+                //进行重试操作
+                setTimeout(function (){
+                    tmpThis.getFormatLocationBd(lat, lng)
+                }, 1000)
             })
-    }        
+    },
+    getFormatLocationGoogle: function (lat, lng) {
+        let tmpThis = this
+        Bus.$http.get('https://maps.googleapis.com/maps/api/geocode/json?latlng=' + lat + ',' + lng + '&key=' + Const.gak)
+            .then((response) => {
+                Bus.$emit('format_location', response.body["results"], Const.GOOGLE)
+            })
+            .catch(function (response) {
+                setTimeout(function (){
+                    tmpThis.getFormatLocationGoogle(lat, lng)
+                }, 1000)
+            })
+    },
+
+    //存储操作
+    //开始结束格式化地址
+
+    //点记录表
+
+    //路书记录
+
+    //当前正在记录uuid 能够实现暂停
+
+    //点记录uuid列表 注意队列形式
 
 }

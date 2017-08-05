@@ -32,7 +32,8 @@
             "cordova-plugin-advanced-geolocation": {},
             "cordova-plugin-background-mode": {},
             "cordova-plugin-camera": {},
-            "cordova-plugin-file": {}
+            "cordova-plugin-file": {},
+            "cordova-plugin-device": {}
         },
         "platforms": [
             "android",

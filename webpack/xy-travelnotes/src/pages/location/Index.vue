@@ -59,6 +59,8 @@
             startRecLocation() {
                 this['locationRecSwitch'] = true
                 Bus.$emit('switch_location_point_rec', true);
+                //获取当前点名称
+                LocationService.initRecLocation();
             },
             stopRecLocation() {
                 this['locationRecSwitch'] = false
