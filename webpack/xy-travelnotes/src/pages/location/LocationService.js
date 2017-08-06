@@ -44,9 +44,10 @@ export default {
             var currentPointList = this.pointListGet()
             var oldLat = currentPointList[currentPointList.length - 1].latitude
             var oldLng = currentPointList[currentPointList.length - 1].longitude
-            if (locationData.latitude != 0 && locationData.longitude != 0
+            if ((locationData.latitude != 0 && locationData.longitude != 0
                     && (Math.abs(locationData.latitude  - oldLat) > 0.00001
-                    || Math.abs(locationData.longitude - oldLng) > 0.00001)){
+                    || Math.abs(locationData.longitude - oldLng) > 0.00001))
+                || '' != locationData.type){    //排除特别的类型
                 this.locationPointList.push(locationData)
             }
         } else {
@@ -223,7 +224,38 @@ export default {
     },
 
     //路书记录
+    storageSetRoadNote: function (roadNoteText, locationPicList) {
+        let roadNoteUuid = Uuid.resetUuid(Const.UUID_ROAD_MAP)
+        let currentRecid = this.storageGetCurrentRecId()
+        let timestamp = new Date().getTime()
+        //打标记到路径集中
+        let roadNoteLocation = this.getCurrentLocation()
+        roadNoteLocation.type = 'roadmap'
+        roadNoteLocation.roadmap_uuid = roadNoteUuid
+        this.pointListPush(roadNoteLocation)
 
+        let tmpRoadMap = {
+            'text' : roadNoteText,
+            'piclist' : locationPicList,
+            'timestamp' : timestamp,
+            'currentlocation' : roadNoteLocation
+        }
+
+        //获取localstorage中数据
+        let storageRoadNote = storage.getItem(Const.STORAGE_ROAD_NOTE + currentRecid)
+        if (null != storageRoadNote){
+            let tmpArrRoadNote = JSON.parse(storageRoadNote)
+            if (tmpArrRoadNote.length){
+                //继续插入
+                tmpArrRoadNote.push(tmpRoadMap)
+                storage.setItem(Const.STORAGE_ROAD_NOTE + currentRecid, JSON.stringify(tmpArrRoadNote))
+            } else {
+                storage.setItem(Const.STORAGE_ROAD_NOTE + currentRecid, JSON.stringify([tmpRoadMap]))
+            }
+        } else {
+            storage.setItem(Const.STORAGE_ROAD_NOTE + currentRecid, JSON.stringify([tmpRoadMap]))
+        }
+    },
 
     //点记录uuid列表 注意队列形式
     storagePushUuidList: function (uuid) {

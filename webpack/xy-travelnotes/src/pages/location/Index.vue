@@ -19,7 +19,7 @@
             </mu-appbar>
             <mu-content-block>
                 <mu-row gutter>
-                    <mu-text-field hintText="天気がいいから、散歩しましょう" multiLine :rows="3" :rowsMax="6" fullWidth/>
+                    <mu-text-field hintText="天気がいいから、散歩しましょう" v-model="roadNoteText" multiLine :rows="3" :rowsMax="6" fullWidth/>
                 </mu-row>
                 <mu-row gutter>
                     <mu-icon-button id="camera-icon" icon="photo_camera" @click="openCamera('')"/>
@@ -43,12 +43,14 @@
     import BaiduMap from './components/BaiduMap'
     import LocationService from './LocationService'
     import Bus from '../../assets/EventBus'
+    import * as Const from '../../constants/Const'
     export default {
         data () {
             return {
                 locationRecSwitch: false,      //记录开关
                 rightTop: {horizontal: 'right', vertical: 'top'},
                 popup: false,
+                roadNoteText:    '',
                 locationPicList: [],
 
                 intervalSetLocationRec: 0,
@@ -87,13 +89,23 @@
                 this['popup'] = true
             },
             sendLocateNote () {
+                //记录路书到localstorage中，生成路书uuid
+                let piclist = []
+                if (this['locationPicList'].length){
+                    for (let x in this['locationPicList']){
+                        piclist.push({
+                            'image' : this['locationPicList'][x].image,
+                            'uri'   : this['locationPicList'][x].uri,
+                        })
+                    }
+                }
+                LocationService.storageSetRoadNote(this['roadNoteText'], this['locationPicList'])
                 //向服务器发送
-                var currentPointList = LocationService.pointListGet()
-
                 this.closePopup()
             },
             closePopup () {
                 //清空数据
+                this['roadNoteText'] = ''
                 this['locationPicList'] = []
                 this['popup'] = false
             },

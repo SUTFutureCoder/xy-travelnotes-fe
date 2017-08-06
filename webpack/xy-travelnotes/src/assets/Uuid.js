@@ -6,9 +6,6 @@
 let uuidMap = []
 
 export function getUuid(name){
-    if (undefined == uuidMap[name]){
-        uuidMap[name] = genUuid(16, 16)
-    }
     return uuidMap[name]
 }
 
