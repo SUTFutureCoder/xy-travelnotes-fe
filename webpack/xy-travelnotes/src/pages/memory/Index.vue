@@ -1,11 +1,16 @@
 <template>
-        <mu-list>
-            <mu-sub-header>今天</mu-sub-header>
-            <mu-list-item title="这个周末一起吃饭么?">
-                <mu-avatar src="/images/avatar1.jpg" slot="leftAvatar"/>
+    <mu-list>
+        <mu-refresh-control :refreshing="refreshing" :trigger="trigger" @refresh="refresh"/>
+        <div v-for="record, index in locationRecList">
+            <mu-list-item   :title="record.address">
+                <mu-avatar  v-if="record.roadnote_pic != ''" :src="record.roadnote_pic" slot="leftAvatar"/>
+                <p>{{record.roadnote_text}} </p>
                 <span slot="describe">
-                    <span style="color: rgba(0, 0, 0, .87)">Myron Liu -</span> 周末要来你这里出差，要不要一起吃个饭呀，实在编不下去了,哈哈哈哈哈哈
-                </span>
+                <span>uuid - {{record.uuid}}</span><br/>
+                <span>time - {{record.timestamp}} </span><br/>
+                <span>路径点数量 - {{record.location}} </span><br/>
+                <span>路书数量 - {{record.roadnote}} </span><br/>
+            </span>
                 <mu-icon-menu slot="right" icon="more_vert" tooltip="操作">
                     <mu-menu-item title="回复" />
                     <mu-menu-item title="标记" />
@@ -13,34 +18,38 @@
                 </mu-icon-menu>
             </mu-list-item>
             <mu-divider inset/>
-            <mu-list-item title="Alex Qin">
-                <mu-avatar src="/images/avatar2.jpg" slot="leftAvatar"/>
-                <span slot="describe">
-                    <span style="color: rgba(0, 0, 0, .87)">看电影啊</span> <br/>
-                    我们去看电影，最近有部烂片上映，又有吐槽的了
-                </span>
-                <mu-icon-menu slot="right" icon="more_vert" tooltip="操作">
-                    <mu-menu-item title="回复" />
-                    <mu-menu-item title="标记" />
-                    <mu-menu-item title="删除" />
-                </mu-icon-menu>
-            </mu-list-item>
-            <mu-divider inset/>
-            <mu-list-item title="LOL">
-                <mu-avatar src="/images/avatar3.jpg" slot="leftAvatar"/>
-                <span slot="describe">
-        <span style="color: rgba(0, 0, 0, .87)">去打游戏啊</span><br/>
-        周末一起 LOL
-      </span>
-                <mu-icon-menu slot="right" icon="more_vert" tooltip="操作">
-                    <mu-menu-item title="回复" />
-                    <mu-menu-item title="标记" />
-                    <mu-menu-item title="删除" />
-                </mu-icon-menu>
-            </mu-list-item>
-        </mu-list>
+        </div>
+        <br/><br/><br/><br/><br/><br/>
+    </mu-list>
 </template>
 <script>
+    import LocationService from './../location/LocationService'
+    export default {
+        data(){
+            return {
+                locationRecList: null,
+                refreshing: false,
+                trigger: null
+            }
+        },
+        mounted() {
+            //获取记录列表
+            this.trigger = this.$el
+            this['locationRecList'] = LocationService.storageGetLocationRecList()
+        },
+        methods: {
+            refreshMemory: function (){
+                this['locationRecList'] = LocationService.storageGetLocationRecList()
+            },
+            refresh () {
+                this.refreshing = true
+                this['locationRecList'] = LocationService.storageGetLocationRecList()
+                setTimeout(() => {
+                    this.refreshing = false
+                }, 500)
+            }
+        },
+    }
 </script>
 <style>
 #memory-container{

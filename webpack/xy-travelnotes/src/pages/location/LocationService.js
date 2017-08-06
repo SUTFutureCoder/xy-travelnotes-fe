@@ -122,9 +122,6 @@ export default {
                 this.stopRecLocation()
             }, 1000)
         }
-
-        //清除当前进行的id
-
     },
     //暂停记录操作
     pauseRecLocation: function () {
@@ -269,10 +266,87 @@ export default {
         }
         if (null != storageUuid){
             let tmpStorageUuid = JSON.parse(storageUuid)
+            //如果uuid已经存在则不操作
+            for (let x in tmpStorageUuid){
+                if (tmpStorageUuid[x] == uuid){
+                    return false
+                }
+            }
             tmpStorageUuid.push(tmpUuid)
             storage.setItem(Const.STORAGE_RECORD_UUID_LIST, JSON.stringify(tmpStorageUuid))
         } else {
             storage.setItem(Const.STORAGE_RECORD_UUID_LIST, JSON.stringify([tmpUuid]))
         }
+    },
+    
+    //获取已经记录的列表
+    storageGetLocationRecList: function () {
+        //先获取uuid列表
+        let historyUuidList = storage.getItem(Const.STORAGE_RECORD_UUID_LIST)
+        let locationRecList = []
+        if (null != historyUuidList){
+            let tmpStorageUuid = JSON.parse(historyUuidList)
+            for (let uuid in tmpStorageUuid){
+                //根据uuid去各个地方捞数据
+
+                //路径点数据
+                let storageLocationRecLength = 0
+                let tmpStorageLocationRec = storage.getItem(Const.STORAGE_LOCATION_REC + tmpStorageUuid[uuid].uuid)
+                if (null != tmpStorageLocationRec){
+                    let tmpArrStorageLocationRec = JSON.parse(tmpStorageLocationRec)
+                    storageLocationRecLength = tmpArrStorageLocationRec.length
+                }
+
+                //路书数据
+                let storageRoadNoteLength = 0
+                let storageRoadNotePic    = ''
+                let storageRoadNoteText   = ''
+                let tmpStorageRoadNoteRec = storage.getItem(Const.STORAGE_ROAD_NOTE + tmpStorageUuid[uuid].uuid)
+                if (null != tmpStorageRoadNoteRec){
+                    let tmpArrStorageRoadNoteRec = JSON.parse(tmpStorageRoadNoteRec)
+                    for (let roadnote in tmpArrStorageRoadNoteRec){
+                        if (tmpArrStorageRoadNoteRec[roadnote]['piclist'] != undefined && tmpArrStorageRoadNoteRec[roadnote]['piclist'].length){
+                            storageRoadNotePic = tmpArrStorageRoadNoteRec[roadnote]['piclist'][0].uri
+                        }
+                        storageRoadNoteText = tmpArrStorageRoadNoteRec[roadnote]['text']
+                    }
+                    storageRoadNoteLength = tmpArrStorageRoadNoteRec.length
+                }
+
+                //起始点作为标题
+                let startAddress = ''
+                let tmpStorageAddress = storage.getItem(Const.STORAGE_START_END_ADDR + tmpStorageUuid[uuid].uuid)
+                if (null != tmpStorageAddress){
+                    let tmpArrStorageAddress = JSON.parse(tmpStorageAddress)
+                    for (let addr in tmpArrStorageAddress){
+                        if (tmpArrStorageAddress[addr].type == 'start'){
+                            startAddress = tmpArrStorageAddress[addr].data.formatted_address
+                        }
+                    }
+                }
+
+                let date = new Date(tmpStorageUuid[uuid].timestamp);
+                let Y = date.getFullYear() + '-';
+                let M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+                let D = date.getDate() + ' ';
+                let h = date.getHours() + ':';
+                let m = date.getMinutes() + ':';
+                let s = date.getSeconds();
+
+
+                locationRecList.push({
+                    'address' : startAddress,
+                    'uuid'    : tmpStorageUuid[uuid].uuid,
+                    'timestamp' : Y+M+D+h+m+s,
+                    'location' : storageLocationRecLength,
+                    'roadnote' : storageRoadNoteLength,
+                    'roadnote_pic': storageRoadNotePic,
+                    'roadnote_text': storageRoadNoteText,
+                })
+
+            }
+            return locationRecList
+        }
+        return locationRecList
     }
 }

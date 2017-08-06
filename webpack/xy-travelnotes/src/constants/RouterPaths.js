@@ -6,3 +6,4 @@
 // export const PAGES_HOME  = '/'
 export const PAGES_LOCATION = '/'
 export const PAGES_MEMORY   = '/memory'
+export const PAGES_ME       = '/me'
