@@ -45,8 +45,8 @@ export default {
             var oldLat = currentPointList[currentPointList.length - 1].latitude
             var oldLng = currentPointList[currentPointList.length - 1].longitude
             if ((locationData.latitude != 0 && locationData.longitude != 0
-                    && (Math.abs(locationData.latitude  - oldLat) > 0.00001
-                    || Math.abs(locationData.longitude - oldLng) > 0.00001))
+                    && (Math.abs(locationData.latitude  - oldLat) > 0.0001
+                    || Math.abs(locationData.longitude - oldLng) > 0.0001))
                 || '' != locationData.type){    //排除特别的类型
                 this.locationPointList.push(locationData)
             }
@@ -268,7 +268,7 @@ export default {
             let tmpStorageUuid = JSON.parse(storageUuid)
             //如果uuid已经存在则不操作
             for (let x in tmpStorageUuid){
-                if (tmpStorageUuid[x] == uuid){
+                if (tmpStorageUuid[x].uuid == uuid){
                     return false
                 }
             }

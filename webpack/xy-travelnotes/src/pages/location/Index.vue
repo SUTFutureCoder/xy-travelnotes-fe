@@ -62,11 +62,11 @@
         methods: {
             startRecLocation() {
                 this['locationRecSwitch'] = true
+                //设置当前录制uuid
+                LocationService.storageSetCurrentRecId('')
                 Bus.$emit('switch_location_point_rec', true);
                 //获取当前点名称
                 LocationService.initRecLocation();
-                //设置当前录制uuid
-                LocationService.storageSetCurrentRecId('')
                 //向录制uuid集添加uuid
                 LocationService.storagePushUuidList(LocationService.storageGetCurrentRecId())
                 //设置定时任务 每1分钟同步记录点集到localstorage中
@@ -114,6 +114,7 @@
                 var options = {
                     // Some common settings are 20, 50, and 100
                     quality: 100,   //后期可配置
+                    saveToPhotoAlbum: true,
                     destinationType: Camera.DestinationType.FILE_URI,
                     // In this app, dynamically set the picture source, Camera or photo gallery
                     sourceType: srcType,

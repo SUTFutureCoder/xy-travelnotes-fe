@@ -28,13 +28,11 @@
                 //记录坐标转换重试次数以及开关
                 //如果当前坐标无法被转换，则判定为海外
                 transRetry: 0,
+
+                debugloop: 10,
             }
         },
         mounted() {
-            setInterval(
-                this.location,
-                10000   //每10秒定位一次
-            );
             let vue = this;
             document.addEventListener('deviceready', function () {
                 // Android customization
@@ -91,6 +89,7 @@
                             Bus.$emit('current_location', jsonObject);
                             switch(jsonObject.provider){
                                 case "gps":
+                                    console.log(vue['debugloop']++)
 //                                    if(jsonObject.latitude != "0.0"){
 //                                        console.log("GPS location detected - lat:" +
 //                                            jsonObject.latitude + ", lon: " + jsonObject.longitude +
@@ -127,6 +126,7 @@
                                     break;
 
                                 case "network":
+                                    console.log(vue['debugloop']++)
 //                                    if(jsonObject.latitude != "0.0"){
 //                                        console.log("Network location detected - lat:" +
 //                                            jsonObject.latitude + ", lon: " + jsonObject.longitude +
@@ -164,19 +164,26 @@
 
                                 case "satellite":
 //                                    console.log("Satellites detected " + (Object.keys(jsonObject).length - 1));
-//                                    console.log("Satellite meta-data: " + data);
+
+//                                    if (--vue['debugloop'] > 0){
+//                                        console.log("Satellite meta-data: ");
+//                                        console.log(jsonObject)
+//                                    }
                                     break;
 
                                 case "cell_info":
-//                                    console.log("cell_info JSON: " + data);
+                                    console.log("cell_info JSON: ");
+                                    console.log(jsonObject)
                                     break;
 
                                 case "cell_location":
-//                                    console.log("cell_location JSON: " + data);
+                                    console.log("cell_location JSON: ")
+                                    console.log(jsonObject)
                                     break;
 
                                 case "signal_strength":
-//                                    console.log("Signal strength JSON: " + data);
+                                    console.log("Signal strength JSON: ");
+                                    console.log(jsonObject)
                                     break;
                             }
                             return jsonObject
@@ -197,14 +204,14 @@
                     //
                     /////////////////////////////////////////
                     {
-                        "minTime":0,
+                        "minTime":30000,
                         "minDistance":0,
                         "noWarn":false,
                         "providers":"all",
                         "useCache":true,
-                        "satelliteData":true,
-                        "buffer":true,
-                        "bufferSize":10,
+                        "satelliteData":false,
+                        "buffer":false,
+                        "bufferSize":0,
                         "signalStrength":false
                     });
             }
