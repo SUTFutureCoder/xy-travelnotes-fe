@@ -69,10 +69,11 @@
                 LocationService.initRecLocation();
                 //向录制uuid集添加uuid
                 LocationService.storagePushUuidList(LocationService.storageGetCurrentRecId())
-                //设置定时任务 每1分钟同步记录点集到localstorage中
+                //设置定时任务 每5秒同步记录点集到localstorage中
+                LocationService.storageSetLocationRec()
                 this['intervalSetLocationRec'] = setInterval(() => {
                     LocationService.storageSetLocationRec()
-                }, 1 * 1000)
+                }, 5 * 1000)
             },
             stopRecLocation() {
                 this['locationRecSwitch'] = false
@@ -127,13 +128,15 @@
                 return options;
             },
             openCamera(selection) {
-
+                console.log(selection)
                 var srcType = Camera.PictureSourceType.CAMERA;
                 var options = this.setOptions(srcType);
 //                var func = createNewFileEntry;
                 let vue = this
                 navigator.camera.getPicture(function cameraSuccess(imageUri) {
                     //添加图片
+                    options.targetHeight = 20;
+                    options.targetWidth = 20;
                     vue.$data.locationPicList.push({
                         'image': imageUri,
                         'uri':   imageUri,

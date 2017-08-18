@@ -172,18 +172,18 @@
                                     break;
 
                                 case "cell_info":
-                                    console.log("cell_info JSON: ");
-                                    console.log(jsonObject)
+//                                    console.log("cell_info JSON: ");
+//                                    console.log(jsonObject)
                                     break;
 
                                 case "cell_location":
-                                    console.log("cell_location JSON: ")
-                                    console.log(jsonObject)
+//                                    console.log("cell_location JSON: ")
+//                                    console.log(jsonObject)
                                     break;
 
                                 case "signal_strength":
-                                    console.log("Signal strength JSON: ");
-                                    console.log(jsonObject)
+//                                    console.log("Signal strength JSON: ");
+//                                    console.log(jsonObject)
                                     break;
                             }
                             return jsonObject

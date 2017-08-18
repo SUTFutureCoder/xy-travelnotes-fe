@@ -55,6 +55,7 @@
   <preference name="KeepRunning" value="true"/>
   <preference name="AndroidLaunchMode" value="standard"/>
   <preference name="loadUrlTimeoutValue" value="60000"/>
+  <preference name="AndroidPersistentFileLocation" value="Internal"/>
   <chcp>
     <local-development enabled="true"/>
     <config-file url="https://0333e2b3.ngrok.io/chcp.json"/>
