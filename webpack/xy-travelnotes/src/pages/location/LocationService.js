@@ -45,6 +45,7 @@ export default {
             var oldLat = currentPointList[currentPointList.length - 1].latitude
             var oldLng = currentPointList[currentPointList.length - 1].longitude
             if ((locationData.latitude != 0 && locationData.longitude != 0
+                    && locationData.cached == false //禁止读取缓存的GPS位置
                     && (Math.abs(locationData.latitude  - oldLat) > 0.0001
                     || Math.abs(locationData.longitude - oldLng) > 0.0001))
                 || '' != locationData.type){    //排除特别的类型

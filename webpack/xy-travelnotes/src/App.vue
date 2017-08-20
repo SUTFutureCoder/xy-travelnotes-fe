@@ -1,18 +1,25 @@
 <template>
   <div id="app">
     <keep-alive><router-view></router-view></keep-alive>
-    <bottom id="bottom"></bottom>
+    <bottom id="bottom" v-if="showbottom"></bottom>
   </div>
 </template>
 
 <script>
 import Bottom from './pages/common/Bottom'
+import Bus from './assets/EventBus'
 export default {
     name: 'app',
     data () {
         return {
-
+            showbottom: true, //是否显示底端按钮
         }
+    },
+    mounted() {
+        let vue = this
+        Bus.$on("showbottom", function (boolBottom) {
+            vue['showbottom'] = boolBottom
+        })
     },
     components: {
         Bottom

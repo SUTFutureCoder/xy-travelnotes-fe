@@ -8,7 +8,8 @@
                 :anchorOrigin="rightTop"
                 :targetOrigin="rightTop"
         >
-            <mu-menu-item title="开始记录" v-if="!locationRecSwitch" @click="startRecLocation"/>
+            <mu-menu-item title="开始记录" v-if="!locationRecSwitch && !continueLocationRecSwitch" @click="startRecLocation"/>
+            <mu-menu-item title="继续记录" v-if="!locationRecSwitch && continueLocationRecSwitch" @click="startRecLocation"/>
             <mu-menu-item title="添加路书" v-if="locationRecSwitch" @click="openPopup"/>
             <mu-menu-item title="停止记录" v-if="locationRecSwitch"  @click="stopRecLocation"/>
         </mu-icon-menu>
@@ -47,7 +48,8 @@
     export default {
         data () {
             return {
-                locationRecSwitch: false,      //记录开关
+                locationRecSwitch: false,           //记录开关
+                continueLocationRecSwitch: false,   //是否有未完成的记录
                 rightTop: {horizontal: 'right', vertical: 'top'},
                 popup: false,
                 roadNoteText:    '',
@@ -58,6 +60,8 @@
         },
         mounted() {
             LocationService.addLocationLinstener()
+            //获取当前正在记录uuid以判断是否显示“继续记录”
+            this['continueLocationRecSwitch'] = LocationService.storageGetCurrentRecId()
         },
         methods: {
             startRecLocation() {
@@ -76,8 +80,10 @@
                 }, 5 * 1000)
             },
             stopRecLocation() {
+                //恢复状态
                 this['locationRecSwitch'] = false
-                Bus.$emit('switch_location_point_rec', false);
+                this['continueLocationRecSwitch'] = false
+                Bus.$emit('switch_location_point_rec', false)
                 //执行停止记录操作
                 LocationService.stopRecLocation()
                 clearInterval(this['intervalSetLocationRec'])
