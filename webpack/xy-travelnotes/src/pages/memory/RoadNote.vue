@@ -1,34 +1,28 @@
 <template>
-    <div id="memory-roadnote">
-        <!-- 头部 -->
-        <!-- 返回按钮 -->
-        <!-- 地图正文 -->
-        <baidu-map :scroll-wheel-zoom="true"
-                   :center="center"
-                   :zoom="zoom"
-        >
-        </baidu-map>
+    <div id="memory-road-note">
+        <RoadNoteBaiduMap></RoadNoteBaiduMap>
     </div>
 </template>
 <script>
+    import RoadNoteBaiduMap from './components/RoadNoteBaiduMap'
     export default {
         data () {
             return {
-                center: {
-                    lng: 0,
-                    lat: 0
-                },
-                zoom: 19,
-
-                debugloop: 10,
-
-                roadNoteUuid: 0,
             }
         },
         mounted() {
             this['roadNoteUuid'] = this.$route.params.uuid
         },
         methods: {
+        },
+        components: {
+            RoadNoteBaiduMap
         }
     }
 </script>
+<style>
+    #memory-road-note {
+        width: 100%;
+        height: 100%;
+    }
+</style>

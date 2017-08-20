@@ -204,7 +204,7 @@
                     //
                     /////////////////////////////////////////
                     {
-                        "minTime":30000,
+                        "minTime":10000,
                         "minDistance":0,
                         "noWarn":false,
                         "providers":"all",
