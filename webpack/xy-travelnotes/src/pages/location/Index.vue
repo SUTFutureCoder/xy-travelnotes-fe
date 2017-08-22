@@ -24,11 +24,13 @@
                 </mu-row>
                 <mu-row gutter>
                     <mu-icon-button id="camera-icon" icon="photo_camera" @click="openCamera('')"/>
+                    <mu-icon-button id="photo-icon" icon="insert_photo" @click="openFilePicker('')"/>
                 </mu-row>
                 <div class="gridlist-location-pic">
                     <mu-grid-list class="gridlist-location-pic-list">
                         <mu-grid-tile v-for="prepic, index in locationPicList" :key="index">
                             <img :src="prepic.image" :index="index" :uri="prepic.uri"/>
+                            <mu-icon-button icon="close" slot="action" @click="removeImage(index)"/>
                         </mu-grid-tile>
                     </mu-grid-list>
                 </div>
@@ -134,23 +136,42 @@
                 return options;
             },
             openCamera(selection) {
-                console.log(selection)
-                var srcType = Camera.PictureSourceType.CAMERA;
-                var options = this.setOptions(srcType);
+                let srcType = Camera.PictureSourceType.CAMERA;
+                let options = this.setOptions(srcType);
 //                var func = createNewFileEntry;
                 let vue = this
                 navigator.camera.getPicture(function cameraSuccess(imageUri) {
                     //添加图片
-                    options.targetHeight = 20;
-                    options.targetWidth = 20;
                     vue.$data.locationPicList.push({
                         'image': imageUri,
                         'uri':   imageUri,
                     })
                 }, function cameraError(error) {
                     console.debug("Unable to obtain picture: " + error, "app");
-
                 }, options);
+            },
+            //从相册中选择
+            openFilePicker(selection) {
+                let srcType = Camera.PictureSourceType.SAVEDPHOTOALBUM
+                let options = this.setOptions(srcType)
+                let vue = this
+                navigator.camera.getPicture(function cameraSuccess(imageUri) {
+                    vue.$data.locationPicList.push({
+                        'image': imageUri,
+                        'uri':   imageUri,
+                    })
+                }, function cameraError(error) {
+                    console.debug("Unable to obtain picture: " + error, "app");
+                }, options);
+            },
+            removeImage(picindex){
+                console.log(this['locationPicList'])
+                console.log(this['locationPicList'].length)
+                console.log(picindex)
+                if (picindex >= this['locationPicList'].length){
+                    return false
+                }
+//                this['locationPicList'].splice(picindex, 1)
             }
         },
         components: {
@@ -178,6 +199,10 @@
     }
     #camera-icon .material-icons {
         width: 24px;
+    }
+    #photo-icon {
+        position: absolute;
+        left: 58px;
     }
     .gridlist-location-pic{
         display: flex;
