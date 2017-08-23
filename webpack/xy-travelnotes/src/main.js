@@ -37,3 +37,6 @@ Vue.http.interceptors.push((request, next) => {
     request.credentials = true
     next()
 })
+
+document.addEventListener('touchstart', function (event) {
+}, true);

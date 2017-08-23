@@ -30,6 +30,8 @@
                     <mu-grid-list class="gridlist-location-pic-list">
                         <mu-grid-tile v-for="prepic, index in locationPicList" :key="index">
                             <img :src="prepic.image" :index="index" :uri="prepic.uri"/>
+                            <span slot="title"></span>
+                            <span slot="subTitle"></span>
                             <mu-icon-button icon="close" slot="action" @click="removeImage(index)"/>
                         </mu-grid-tile>
                     </mu-grid-list>
@@ -95,6 +97,8 @@
                 LocationService.storageResetCurrentRecId()
             },
             openPopup () {
+                this['roadNoteText'] = ''
+                this['locationPicList'] = []
                 this['popup'] = true
             },
             sendLocateNote () {
@@ -165,13 +169,13 @@
                 }, options);
             },
             removeImage(picindex){
-                console.log(this['locationPicList'])
-                console.log(this['locationPicList'].length)
-                console.log(picindex)
-                if (picindex >= this['locationPicList'].length){
+                //这里绝对不能写console.log，否则会提示Handling of 'touchstart' input event was delayed for X ms due to main thread being busy
+//                console.log(this['locationPicList'].length)
+//                console.log(picindex)
+                if (picindex >= this.$data.locationPicList.length){
                     return false
                 }
-//                this['locationPicList'].splice(picindex, 1)
+                this.$data.locationPicList.splice(picindex, 1)
             }
         },
         components: {
