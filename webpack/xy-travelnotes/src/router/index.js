@@ -9,6 +9,7 @@ import Me from './../pages/me/Index'
 Vue.use(Router)
 
 export default new Router({
+    mode: 'history',
     routes: [
         {
             path: RouterPath.PAGES_LOCATION,

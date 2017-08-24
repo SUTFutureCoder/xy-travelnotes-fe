@@ -20,6 +20,28 @@ export default {
         Bus.$on("showbottom", function (boolBottom) {
             vue['showbottom'] = boolBottom
         })
+//        document.addEventListener('deviceready', function () {
+//            vue.onDeviceReady(vue)
+//        }, false)
+    },
+    methods: {
+//        onDeviceReady(vue){
+//            document.addEventListener('backbutton', function (event) {
+//                vue.onBackKeyDown(vue, event)
+//            }, false)
+//        },
+//        onBackKeyDown(vue, event){
+            //这里可以写双击退出
+//            console.log(event)
+//            console.log(navigator)
+//            alert(vue.$router.path)
+//            if($.mobile.activePage.is('#homepage')){
+//                navigator.app.exitApp();
+//            }
+//            else {
+//                navigator.app.backHistory()
+//            }
+//        }
     },
     components: {
         Bottom

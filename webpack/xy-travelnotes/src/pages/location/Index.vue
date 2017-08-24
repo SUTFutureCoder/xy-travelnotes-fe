@@ -27,9 +27,9 @@
                     <mu-icon-button id="photo-icon" icon="insert_photo" @click="openFilePicker('')"/>
                 </mu-row>
                 <div class="gridlist-location-pic">
-                    <mu-grid-list class="gridlist-location-pic-list">
+                    <mu-grid-list :cols="3" class="gridlist-location-pic-list">
                         <mu-grid-tile v-for="prepic, index in locationPicList" :key="index">
-                            <img :src="prepic.image" :index="index" :uri="prepic.uri"/>
+                            <img :src="prepic.image" :index="index" :uri="prepic.uri" class="gridlist-location-pic-list-img"/>
                             <span slot="title"></span>
                             <span slot="subTitle"></span>
                             <mu-icon-button icon="close" slot="action" @click="removeImage(index)"/>

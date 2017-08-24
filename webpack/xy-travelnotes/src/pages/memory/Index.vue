@@ -38,6 +38,11 @@
             this.trigger = this.$el
             this['locationRecList'] = LocationService.storageGetLocationRecList()
         },
+        activated() {
+            //当重新进入时只执行activated
+            //恢复底端显示
+//            Bus.$emit('showbottom', true)
+        },
         methods: {
             refreshMemory: function (){
                 this['locationRecList'] = LocationService.storageGetLocationRecList()

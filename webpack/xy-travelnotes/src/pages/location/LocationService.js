@@ -221,6 +221,17 @@ export default {
         }
     },
 
+    storageGetLocationRec: function (uuid) {
+        let storageLocationRec = storage.getItem(Const.STORAGE_LOCATION_REC + uuid)
+        if (null != storageLocationRec){
+            let tmpArrStorageLocationRec = JSON.parse(storageLocationRec)
+            if (tmpArrStorageLocationRec.length){
+                return tmpArrStorageLocationRec
+            }
+        }
+        return false;
+    },
+
     //路书记录
     storageSetRoadNote: function (roadNoteText, locationPicList) {
         let roadNoteUuid = Uuid.resetUuid(Const.UUID_ROAD_MAP)
@@ -253,6 +264,17 @@ export default {
         } else {
             storage.setItem(Const.STORAGE_ROAD_NOTE + currentRecid, JSON.stringify([tmpRoadMap]))
         }
+    },
+
+    storageGetRoadNote: function (uuid) {
+        let storageRoadNote = storage.getItem(Const.STORAGE_ROAD_NOTE + uuid)
+        if (null != storageRoadNote){
+            let tmpArrRoadNote = JSON.parse(storageRoadNote)
+            if (tmpArrRoadNote.length){
+                return tmpArrRoadNote
+            }
+        }
+        return false
     },
 
     //点记录uuid列表 注意队列形式
