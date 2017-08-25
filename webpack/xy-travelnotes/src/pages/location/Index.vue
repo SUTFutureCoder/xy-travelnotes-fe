@@ -81,7 +81,7 @@
                 LocationService.storageSetLocationRec()
                 this['intervalSetLocationRec'] = setInterval(() => {
                     LocationService.storageSetLocationRec()
-                }, 5 * 1000)
+                }, 5000)
             },
             stopRecLocation() {
                 //恢复状态
@@ -100,6 +100,10 @@
                 this['roadNoteText'] = ''
                 this['locationPicList'] = []
                 this['popup'] = true
+                //获取当前点地址
+                let roadNoteLocation = LocationService.getCurrentLocation()
+                //这个之后再搭载google
+                LocationService.getFormatLocationBd(roadNoteLocation.latitude, roadNoteLocation.longitude, 'none')
             },
             sendLocateNote () {
                 //记录路书到localstorage中，生成路书uuid

@@ -12,6 +12,7 @@ export default {
     currentLocation: {},
     locationPointList: [],
     locationPointRecSwitch: false,
+    currentAddress: {},
 
     addLocationLinstener: function(){
         let ls = this
@@ -26,7 +27,11 @@ export default {
         })
         Bus.$on('format_location', function (jsonObject, from, type) {
             let objAddress = ls.parseStartEndAddress(jsonObject, from)
-            ls.storageSetStartEndAddress(objAddress, type)
+            if (type == 'start' || type == 'stop'){
+                ls.storageSetStartEndAddress(objAddress, type)
+            } else {
+                ls.currentAddress = objAddress
+            }
         })
     },
     getCurrentLocation: function () {
@@ -241,6 +246,7 @@ export default {
         let roadNoteLocation = this.getCurrentLocation()
         roadNoteLocation.type = 'roadmap'
         roadNoteLocation.roadmap_uuid = roadNoteUuid
+        roadNoteLocation.address = this.currentAddress
         this.pointListPush(roadNoteLocation)
 
         let tmpRoadMap = {
